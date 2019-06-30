@@ -2,9 +2,35 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Springboard Client</title>
+    <title>Springboard Dashboard</title>
   </head>
   <body>
+      <h2>Springboard Offloader Dashboard</h2>
+      <input id="search" type="text" placeholder="Search..">
+      <button onclick="search()">Search</button>
+      <script>
+        var text = document.getElementById("search");
+
+        const WebSocket = require('ws');
+ 
+        var ws;
+        
+
+        function search(){
+            var val = text.value
+            ws = new WebSocket(val);
+            
+            ws.on('open', function open() {
+            
+                ws.send('something');
+            });
+            
+            ws.on('message', function incoming(data) {
+            console.log(data);
+            });
+            
+        }
+      </script>
       <!--
     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
