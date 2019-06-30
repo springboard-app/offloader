@@ -8,12 +8,23 @@
       <h2>Springboard Offloader Dashboard</h2>
       <input id="search" type="text" placeholder="Search..">
       <button onclick="search()">Search</button>
+      
       <br>
       <br>
+
       <h3>Connected Machine Information</h3>
-      <h4 id="cpu_info"></h4>
-      <h4 id="load_info"></h4>
-      <h3 id="active_info"></h3>
+      <table style="width:75%;">
+        <tr>
+                <th>CPU</th>
+                <th>Current Load</th>
+                <th>Job Status</th>
+        </tr>
+        <tr style="padding:10%;">
+      <th id="cpu_info"></th>
+      <th id="load_info"></th>
+      <th id="active_info"></th>
+    </tr>
+    </table>
 
       <script>
         var text = document.getElementById("search");
