@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Springboard Client</title>
+  </head>
+  <body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#config-web-app -->
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCNnu5sEkT_VzqC0GTPT7tv_IziF-Azw2I",
+        authDomain: "springboard-core.firebaseapp.com",
+        databaseURL: "https://springboard-core.firebaseio.com",
+        projectId: "springboard-core",
+        storageBucket: "springboard-core.appspot.com",
+        messagingSenderId: "292547213939",
+        appId: "1:292547213939:web:bb1922bb8b628950"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>  
+    <h1>Springboard Client</h1>
+
+    <script>
+    
+    var db = firebase.firestore();
+    var storage = firebase.storage();
+    
+    db.collection("jobs").onSnapshot(function (snapshot){
+        var data = snapshot.docs.map(doc => doc.data());
+        console.log(data);
+        
+        var len = data.length;
+
+        var model_url;
+        var x_train_url;
+        var y_train_url;
+        var x_test_url;
+        var y_test_url;
+        
+        var id;
+        var type_stat;
+
+        for (var i = 0; i < len;i++){
+            if(data[i].assigned == false && data[i].completed == false){
+                
+                id = snapshot.docs[i].id;
+                console.log(id)
+                var completed_stat = data[i].completed;
+                
+                model_url = data[i].model;
+                x_train_url = data[i].x_train;
+                y_train_url = data[i].y_train;
+                x_test_url = data[i].x_test;
+                y_test_url = data[i].y_test;
+                
+                type_stat = data[i].type;
+
+                db.collection("jobs").doc(id).set({
+                    assigned: false,
+                    //assigned: true,
+                    completed: completed_stat,
+                    model: model_url,
+                    trained_model: "none",
+                    x_train: x_train_url,
+                    y_train: y_train_url,
+                    x_test: x_test_url,
+                    y_test: y_test_url,
+                    type: type_stat
+                })
+
+                var http = require('https');
+                var fs = require('fs');
+
+                //model joblib
+                /*
+                var file = fs.createWriteStream("model.joblib");
+                var request = http.get(model_url, function(response) {
+                    response.pipe(file);
+                });
+
+                //x_train joblib
+                file = fs.createWriteStream("x_train.csv");
+                request = http.get(x_train_url, function(response) {
+                    response.pipe(file);
+                });
+
+                //y_train joblib
+                file = fs.createWriteStream("y_train.csv");
+                request = http.get(y_train_url, function(response) {
+                    response.pipe(file);
+                });
+
+                ////x_test joblib
+                file = fs.createWriteStream("x_test.csv");
+                request = http.get(x_test_url, function(response) {
+                    response.pipe(file);
+                });
+
+                //y_test joblib
+                file = fs.createWriteStream("y_test.csv");
+                request = http.get(y_test_url, function(response) {
+                    response.pipe(file);
+                });
+                */
+
+                var exec = require('child_process').exec;
+                exec("python run_model.py " + id, function(error, stdout, stderr){ 
+                    console.log(stdout);
+                    
+                    var uploaded_url = "trained_model.joblib";
+
+                    var admin = require("firebase-admin");
+
+                    var serviceAccount = require("./springboard-core-firebase-adminsdk-v07h5-e16cc5c68f.json");
+
+                    admin.initializeApp({
+                        credential: admin.credential.cert(serviceAccount),
+                        storageBucket: "springboard-core.appspot.com"
+                    });
+
+                    var path_id = id + ".joblib";
+
+                    var bucket = admin.storage().bucket();
+
+                    var metadata = {
+                        id: '1234'
+                    };
+                    var options = {
+                        destination: storage.ref(path_id),
+                        resumable: false,
+                        metadata: {
+                            metadata: metadata
+                        }
+                    };
+
+                    bucket.upload(path_id, options, function(err, remoteFile) {
+                        if (!err) {
+                            storage.ref(path_id).getDownloadURL().then( function(downloadURL) {
+                                console.log(downloadURL)
+                                db.collection("jobs").doc(id).set({
+                                    assigned: true,
+                                    completed: true,
+                                    model: model_url,
+                                    trained_model: downloadURL,
+                                    x_train: x_train_url,
+                                    y_train: y_train_url,
+                                    x_test: x_test_url,
+                                    y_test: y_test_url,
+                                    type: type_stat
+                                })
+
+                            });
+                            console.log("Uploaded!");
+                                                        
+                        } else {
+                            console.log(err);
+                            console.log("rip")
+                        }
+                    });
+
+                });
+
+                break;
+            }
+        }
+        
+    });
+    </script>
+
+
+  </body>
+</html>

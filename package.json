@@ -1,0 +1,13 @@
+{
+  "name": "your-app",
+  "version": "0.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "firebase-admin": "^8.2.0",
+    "node-url-downloader": "^0.1.9",
+    "shelljs": "^0.8.3"
+  }
+}
