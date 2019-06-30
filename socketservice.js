@@ -6,6 +6,7 @@ const si = require('systeminformation');
 var cpu_data;
 var load_data;
 var system_data;
+var graphics_data;
 var active = "Active";
 
 si.cpu()
@@ -18,7 +19,14 @@ si.fullLoad()
 si.system()
     .then(data => system_data = data.manufacturer + " " + data.model)
 
-module.exports.jobstarted = function (projectId){
+var n;
+si.graphics()
+    .then(data => n = data.controllers.length - 1)
+
+si.graphics()
+    .then(data => graphics_data = data.controllers[n].vendor + " " + data.controllers[n].model)
+
+    module.exports.jobstarted = function (projectId){
     const wss = new WebSocket.Server({ port: 8080 });
     wss.on('connection', function connection(ws) {
         ws.on('message', function incoming(message) {
@@ -32,8 +40,12 @@ module.exports.jobstarted = function (projectId){
                 si.system()
     .then(data => system_data = data.manufacturer + " " + data.model)
             
+    si.graphics()
+    .then(data => graphics_data = data.controllers[n].vendor + " " + data.controllers[n].model)
+
                 ws.send(JSON.stringify({
                     cpu_data,
+                    graphics_data,
                     load_data,
                     system_data,
                     active
@@ -43,7 +55,9 @@ module.exports.jobstarted = function (projectId){
       
         ws.send(JSON.stringify({
             cpu_data,
+            graphics_data,
             load_data,
+            system_data,
             active
         }));
       });
