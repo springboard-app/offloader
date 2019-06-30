@@ -7,11 +7,14 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^2.5.0",
+    "chart.js": "^2.8.0",
     "csv": "^5.1.1",
     "firebase": "^6.2.4",
     "firebase-admin": "^8.2.0",
     "node-url-downloader": "^0.1.9",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.3",
+    "systeminformation": "^4.12.2",
+    "ws": "^7.0.1"
   },
   "devDependencies": {
     "electron-rebuild": "^1.8.5"
