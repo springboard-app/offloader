@@ -24,7 +24,7 @@ id = sys.argv[1]
 tt_percentage = float(sys.argv[2])
 ml_type = sys.argv[3]
 
-data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float")
+data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float",skip_header=1)
 
 
 #print(data)
