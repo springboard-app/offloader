@@ -53,4 +53,4 @@ ml.fit(X_train,y_train)
 if X_test is not None and y_test is not None:
     print(ml.score(X_test,y_test))
 
-dump(ml, 'dist/' + str(id) + '.joblib')
+dump(ml, str(id) + '.joblib')
