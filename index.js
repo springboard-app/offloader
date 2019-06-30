@@ -65,9 +65,13 @@ async function onNewMonitorConnection(connection) {
     console.info(`A new monitor just connected on port ${WS_PORT}`);
     async function sendUpdatedMessage() {
         const cpu =  await si.cpu();
+        var n;
+        si.graphics().then(data => n = data.controllers.length - 1)
+        const gpu =  await si.graphics();
         const data = {
             cpu: `${cpu.manufacturer} ${cpu.brand}`,
             load_data: await si.fullLoad(),
+            graphics_data : `${gpu.controllers[n].vendor} ${gpu.controllers[n].model}`,
             status: taskQueue.length > 0 ? taskQueue[0].getStatus() : "Inactive"
         };
         connection.send(JSON.stringify(data));

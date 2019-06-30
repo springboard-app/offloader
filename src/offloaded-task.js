@@ -26,10 +26,10 @@ class OffloadedTask extends EventEmitter {
 
     async start() {
         this.status = "Starting";
-        this.emit('started');
-        this.status = `Downloading data matrix`;
+        this.emit('Started');
+        this.status = `Downloading Data Matrix`;
         const [dataMatrix] = await firebase.storage().bucket().file(this.projectId).download();
-        this.status = `Caching data matrix`;
+        this.status = `Caching Data Matrix`;
         fs.writeFile(`data_matrix.csv`, dataMatrix, async err => {
             if (err) {
                 console.error(err);
@@ -46,7 +46,7 @@ class OffloadedTask extends EventEmitter {
                     this.abort(err1);
                     return;
                 }
-                this.status = "Uploading model";
+                this.status = "Uploading Model";
                 try {
                     await firebase.storage().bucket().upload(`dist/${this.projectId}.joblib`);
                     this.status = "Inactive";

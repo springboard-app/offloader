@@ -82,8 +82,13 @@
         let allOffload = offloadRef.get()
         .then(snapshot => {
             snapshot.forEach(doc => {
-            offloaders.options[offloaders.options.length] = new Option(doc.data()['monitorEndpoint'], doc.data()['monitorEndpoint']);
-            //console.log(doc.id, '=>', doc.data());
+                var option = document.createElement("option");
+                option.text = doc.data()['monitorEndpoint'];
+                option.value = doc.data()['monitorEndpoint'];
+                offloaders.add(option);
+
+                //offloaders.options[offloaders.options.length] = new Option(doc.data()['monitorEndpoint'], doc.data()['monitorEndpoint']);
+                console.log(doc.id, '=>', doc.data());
             });
         })
         .catch(err => {
@@ -124,7 +129,7 @@
                     case "Downloading Data Matrix":
                         active_info.style.color="orange"
                         break;
-                    case "Downloading Data Matrix":
+                    case "Caching Data Matrix":
                         active_info.style.color="blue"
                         break;
                     case "Training":
