@@ -1,11 +1,11 @@
 const firebase = require('firebase-admin');
 const http = require('http');
-const {OffloadedTask} = require('./src/offloaded-task');
+const {OffloadedTask} = require('./offloaded-task');
 const si = require('systeminformation');
 const WebSocket = require("ws");
 
 const ipAddress = require('ip').address();
-const serviceAccount = require("./service-account");
+const serviceAccount = require("../service-account");
 
 const HTTP_PORT = 3030;
 const WS_PORT = 8080;
@@ -17,8 +17,6 @@ firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     storageBucket: "springboard-core.appspot.com"
 });
-
-
 
 function handleRequest(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -68,16 +66,13 @@ async function onNewMonitorConnection(connection) {
     console.info(`A new monitor just connected on port ${WS_PORT}`);
     async function sendUpdatedMessage() {
         const cpu =  await si.cpu();
-        var n;
-        var system_data_s;
-        si.graphics().then(data => n = data.controllers.length - 1)
-        si.system().then(data => system_data_s = data.manufacturer + " " + data.model)
-        const gpu =  await si.graphics();
+        const system = await si.system();
+        const gpu = (await si.graphics()).controllers.pop();
         const data = {
             cpu: `${cpu.manufacturer} ${cpu.brand}`,
-            system_data: system_data_s,
+            system_data: `${system.manufacturer} ${system.model}`,
             load_data: await si.fullLoad(),
-            graphics_data : `${gpu.controllers[n].vendor} ${gpu.controllers[n].model}`,
+            graphics_data : `${gpu.vendor} ${gpu.model}`,
             status: taskQueue.length > 0 ? taskQueue[0].getStatus() : "Inactive"
         };
         connection.send(JSON.stringify(data));
