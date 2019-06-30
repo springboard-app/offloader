@@ -36,10 +36,10 @@ function handleRequest(req, res) {
                 res.statusCode = 500;
                 res.end();
             });
-            offloadedTask.on('done', () => {
+            offloadedTask.on('done', function(e) {
                 taskQueue.splice(0, 1);
                 res.statusCode = 204;
-                res.end();
+                res.end(e.accuracy)
             });
             taskQueue.push(offloadedTask);
             await offloadedTask.start();

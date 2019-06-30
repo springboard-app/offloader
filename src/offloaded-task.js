@@ -55,7 +55,9 @@ class OffloadedTask extends EventEmitter {
                 try {
                     await firebase.storage().bucket().upload(`${this.projectId}.joblib`);
                     this.status = "Inactive";
-                    this.emit("done");
+                    this.emit("done", {
+                        accuracy: stdout
+                    });
                 } catch (err2) {
                     console.error(err2);
                     this.abort(err2);

@@ -18,6 +18,8 @@ firebase.initializeApp({
     storageBucket: "springboard-core.appspot.com"
 });
 
+
+
 function handleRequest(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     if (req.method === 'POST') {
@@ -25,7 +27,7 @@ function handleRequest(req, res) {
         req.on('data', chunk => {
             chunks.push(chunk)
         });
-        req.on('end', () => {
+        req.on('end', async () => {
             const body = JSON.parse(Buffer.concat(chunks).toString());
             console.log("Received POST request with ", body);
             const offloadedTask = OffloadedTask.parse(body);
@@ -34,13 +36,14 @@ function handleRequest(req, res) {
                 res.statusCode = 500;
                 res.end();
             });
-            offloadedTask.on('done', () => {
+            offloadedTask.on('done', function(e) {
                 taskQueue.splice(0, 1);
+		console.debug(e);
+		res.end(e.accuracy);
                 res.statusCode = 204;
-                res.end();
             });
             taskQueue.push(offloadedTask);
-            taskQueue[0].start();
+            await offloadedTask.start();
         });
     } else {
         res.statusCode = 200;
@@ -64,11 +67,19 @@ httpServer.once("listening", startOffloaderServices);
 
 async function onNewMonitorConnection(connection) {
     console.info(`A new monitor just connected on port ${WS_PORT}`);
+    const cpu =  await si.cpu();
+    var n;
+    var system_data_s;
+    si.graphics().then(data => n = data.controllers.length - 1)
+    si.system().then(data => system_data_s = data.manufacturer + " " + data.model)
+    const gpu =  await si.graphics();
     async function sendUpdatedMessage() {
-        // const cpu =  await si.cpu();
-        // const system = await si.system();
-        // const gpu = (await si.graphics()).controllers.pop();
+
         const data = {
+            cpu: `${cpu.manufacturer} ${cpu.brand}`,
+            system_data: system_data_s,
+            load_data: await si.fullLoad(),
+            graphics_data : `${gpu.controllers[n].vendor} ${gpu.controllers[n].model}`,
             status: taskQueue.length > 0 ? taskQueue[0].getStatus() : "Inactive"
         };
         connection.send(JSON.stringify(data));

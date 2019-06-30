@@ -27,7 +27,7 @@ ml_type = sys.argv[3]
 data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float")
 
 
-#print(data)
+print(data)
 
 y = data[:,0]
 X = data[:,1:]
@@ -44,6 +44,7 @@ elif ml_type == "Support Vector Regressor":
     ml_type = "SVR"
 else:
     ml_type = ml_type.replace(" ","")
+
 #print(ml_type)
 
 ml_str = ml_type + "()"
@@ -51,6 +52,7 @@ ml = eval(ml_str)
 ml.fit(X_train,y_train)
 
 if X_test is not None and y_test is not None:
-    print(str(ml.score(X_test,y_test)))
-
+    print(ml.score(X_test,y_test))
+'''
 dump(ml, str(id) + '.joblib')
+'''
