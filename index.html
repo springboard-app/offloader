@@ -58,7 +58,7 @@
             }else{
                 active_info.style.color="red"
             }
-            load_info.innerHTML = data['load_data'] + "%";
+            load_info.innerHTML = Number.parseFloat(data['load_data']).toPrecision(4) + "%";
             });
             
         }
