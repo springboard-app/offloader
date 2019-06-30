@@ -12,7 +12,7 @@
         <button onclick="search()">Connect</button>
         <select id="offloaders" onclick="fill_offloader()"></select>
         <h3>Connected Machine Information</h3>
-        <h4 id="system_info"></h3>
+        <h4 id="system_info" style="color:blue;"></h3>
 
             <br>
             <br>
@@ -25,16 +25,16 @@
                       <th>Job Status</th>
               </tr>
               <tr style="padding:10%;">
-            <th id="cpu_info"></th>
-            <th id="gpu_info"></th>
-            <th id="load_info"></th>
-            <th id="active_info"></th>
+            <th id="cpu_info" style="color:blue;"></th>
+            <th id="gpu_info" style="color:blue;"></th>
+            <th id="load_info" style="color:blue;"></th>
+            <th id="active_info" style="color:blue;"></th>
           </tr>
           </table>
     </div>
 
 
-    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
@@ -231,7 +231,7 @@ var chart = new Chart(ctx, {
             ticks: {
                 suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
                 // OR //
-                suggestedMax: 5   // minimum value will be 0.
+                suggestedMax: 100   // minimum value will be 0.
             }
         }]
 
