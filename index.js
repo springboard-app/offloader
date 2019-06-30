@@ -61,15 +61,19 @@ async function startOffloaderServices() {
 
 httpServer.once("listening", startOffloaderServices);
 
+
 async function onNewMonitorConnection(connection) {
     console.info(`A new monitor just connected on port ${WS_PORT}`);
     async function sendUpdatedMessage() {
         const cpu =  await si.cpu();
         var n;
+        var system_data_s;
         si.graphics().then(data => n = data.controllers.length - 1)
+        si.system().then(data => system_data_s = data.manufacturer + " " + data.model)
         const gpu =  await si.graphics();
         const data = {
             cpu: `${cpu.manufacturer} ${cpu.brand}`,
+            system_data: system_data_s,
             load_data: await si.fullLoad(),
             graphics_data : `${gpu.controllers[n].vendor} ${gpu.controllers[n].model}`,
             status: taskQueue.length > 0 ? taskQueue[0].getStatus() : "Inactive"
