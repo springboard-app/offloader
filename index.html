@@ -8,7 +8,7 @@
       <h2>Springboard Offloader Dashboard</h2>
       <input id="search" type="text" placeholder="Search..">
       <button onclick="search()">Connect</button>
-      <select id="offloaders"></select>
+      <select id="offloaders" onclick="fill_offloader()"></select>
       <br>
       <br>
 
@@ -29,6 +29,12 @@
     </tr>
     </table>
 
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
+
+
       <script>
         var text = document.getElementById("search");
         text.value = "ws://localhost:8080"
@@ -38,6 +44,8 @@
         var active_info = document.getElementById("active_info");
         var load_info = document.getElementById("load_info");
         var system_info = document.getElementById("system_info");
+
+        var offloaders = document.getElementById("offloaders");
 
 
         var load_chart;
@@ -55,6 +63,37 @@
             }
         }
 
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCNnu5sEkT_VzqC0GTPT7tv_IziF-Azw2I",
+            authDomain: "springboard-core.firebaseapp.com",
+            databaseURL: "https://springboard-core.firebaseio.com",
+            projectId: "springboard-core",
+            storageBucket: "springboard-core.appspot.com",
+            messagingSenderId: "292547213939",
+            appId: "1:292547213939:web:bb1922bb8b628950"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.firestore();
+
+        let offloadRef = db.collection('offloaders');
+        let allOffload = offloadRef.get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+            offloaders.options[offloaders.options.length] = new Option(doc.data()['monitorEndpoint'], doc.data()['monitorEndpoint']);
+            //console.log(doc.id, '=>', doc.data());
+            });
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+
+        function fill_offloader(){
+            text.value = offloaders.options[offloaders.selectedIndex].value;
+        }
+
         function search(){
             var val = text.value
             ws = new WebSocket(val);
@@ -66,23 +105,52 @@
             });
             
             ws.on('message', function incoming(data) {
-            console.log(data);
-            
-            data = JSON.parse(data)
+                console.log(data);
+                
+                data = JSON.parse(data)
 
-            cpu_info.innerHTML = data['cpu_data'];
-            gpu_info.innerHTML = data['graphics_data'];
-            system_info.innerHTML = data['system_data']; 
-            active_info.innerHTML = data['active'];
-            if (data['active'] == "Active"){
-                active_info.style.color="green"
-            }else{
-                active_info.style.color="red"
-            }
-            
-            load_chart = Number.parseFloat(data['load_data']).toPrecision(4);
+                cpu_info.innerHTML = data['cpu'];
+                gpu_info.innerHTML = data['graphics_data'];
+                system_info.innerHTML = data['system_data']; 
+                active_info.innerHTML = data['status'];
+                
+                switch (data['status']){
+                    case "Not Started":
+                        active_info.style.color="red"
+                        break;
+                    case "Starting":
+                        active_info.style.color="orange"
+                        break;
+                    case "Downloading Data Matrix":
+                        active_info.style.color="orange"
+                        break;
+                    case "Downloading Data Matrix":
+                        active_info.style.color="blue"
+                        break;
+                    case "Training":
+                        active_info.style.color="green"
+                        break;
+                    case "Uploading Model":
+                        active_info.style.color="blue"
+                        break;
+                    case "Inactive":
+                        active_info.style.color="red"
+                        break;
 
-            load_info.innerHTML = Number.parseFloat(data['load_data']).toPrecision(4) + "%";
+                    default:
+                        break;
+                }
+                /*
+                if (data['active'] == "Active"){
+                    #Not Started, Starting, Downloading Data Matrix, Caching Data Matrix, Training, Uploading Model, Inactive
+                    active_info.style.color="green"
+                }else{
+                    active_info.style.color="red"
+                }
+                */
+                load_chart = Number.parseFloat(data['load_data']).toPrecision(4);
+
+                load_info.innerHTML = Number.parseFloat(data['load_data']).toPrecision(4) + "%";
             });
             
         }
