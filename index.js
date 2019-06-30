@@ -18,6 +18,8 @@ firebase.initializeApp({
     storageBucket: "springboard-core.appspot.com"
 });
 
+
+
 function handleRequest(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     if (req.method === 'POST') {
