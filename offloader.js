@@ -73,7 +73,6 @@ db.collection("jobs").onSnapshot(function (snapshot){
 
             /* Run Python Script to Train*/
             
-            console.log("Script Executed");
             var exec = require('child_process').exec;
             exec("python train_model.py " + id + " " + train_test_percentage_stat + " " + type_stat, function(error, stdout, stderr){ 
                 console.log(stdout);
@@ -85,7 +84,7 @@ db.collection("jobs").onSnapshot(function (snapshot){
                 };
 
                 var options = {
-                    destination: admin.storage().bucket().get(path_id),
+                    destination: admin.storage().bucket().file(path_id),
                     resumable: false,
                     metadata: {
                         metadata: metadata
@@ -96,13 +95,13 @@ db.collection("jobs").onSnapshot(function (snapshot){
                 bucket.upload(path_id, options, function(err, remoteFile) {
                     if (!err) {
                         
-                        admin.storage().bucket().get.ref(path_id).getDownloadURL().then( function(downloadURL) {
+                        admin.storage().bucket().file(path_id).getDownloadURL().then( function(downloadURL) {
                             console.log(downloadURL)
                             db.collection("jobs").doc(id).set({
                                 //assigned: true,
                                 //completed: true,
-                                assigned: false,
-                                completed: false,
+                                assigned: true,
+                                completed: true,
                                 trained_model: downloadURL,
                                 train_test_percentage: train_test_percentage_stat,
                                 data_location: data_url,
