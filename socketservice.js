@@ -5,6 +5,7 @@ const si = require('systeminformation');
 // promises style - new since version 3
 var cpu_data;
 var load_data;
+var active = "Active";
 
 si.cpu()
     .then(data => cpu_data = data.manufacturer + " " + data.brand)
@@ -20,8 +21,11 @@ module.exports.jobstarted = function (projectId){
           console.log('received: %s', message);
         });
       
-        ws.send('CPU Info: ' + cpu_data);
-        ws.send('Load Info: ' + load_data);
+        ws.send(JSON.stringify({
+            cpu_data,
+            load_data,
+            active
+        }));
       });
 }
 
