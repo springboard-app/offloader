@@ -12,6 +12,7 @@
       <br>
       <h3>Connected Machine Information</h3>
       <h4 id="cpu_info"></h4>
+      <h4 id="load_info"></h4>
       <h3 id="active_info"></h3>
 
       <script>
@@ -20,11 +21,21 @@
 
         var cpu_info = document.getElementById("cpu_info");
         var active_info = document.getElementById("active_info");
+        var load_info = document.getElementById("load_info");
 
         const WebSocket = require('ws');
  
         var ws;
+        var initialized = false;
         
+        setInterval(pollData,1000);
+
+        function pollData(){
+            if (initialized == true){
+                ws.send('information please');
+            }
+        }
+
         function search(){
             var val = text.value
             ws = new WebSocket(val);
@@ -32,6 +43,7 @@
             ws.on('open', function open() {
             
                 ws.send('information please');
+                initialized = true;
             });
             
             ws.on('message', function incoming(data) {
@@ -46,7 +58,7 @@
             }else{
                 active_info.style.color="red"
             }
-
+            load_info.innerHTML = data['load_data'] + "%";
             });
             
         }
