@@ -9,6 +9,10 @@ class OffloadedTask extends EventEmitter {
         this.projectId = projectId;
         this.projectSnapshot = firebase.firestore().doc(`projects/${projectId}`).get();
         this.status = "Not started";
+        this.started = false;
+        this.on('started', () => {
+            this.started = true;
+        });
     }
 
     async getProject() {
@@ -25,8 +29,9 @@ class OffloadedTask extends EventEmitter {
     }
 
     async start() {
+        if (this.started) return;
         this.status = "Starting";
-        this.emit('Started');
+        this.emit('started');
         this.status = `Downloading Data Matrix`;
         const [dataMatrix] = await firebase.storage().bucket().file(this.projectId).download();
         this.status = `Caching Data Matrix`;

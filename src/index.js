@@ -25,7 +25,7 @@ function handleRequest(req, res) {
         req.on('data', chunk => {
             chunks.push(chunk)
         });
-        req.on('end', async () => {
+        req.on('end', () => {
             const body = JSON.parse(Buffer.concat(chunks).toString());
             console.log("Received POST request with ", body);
             const offloadedTask = OffloadedTask.parse(body);
@@ -40,7 +40,7 @@ function handleRequest(req, res) {
                 res.end();
             });
             taskQueue.push(offloadedTask);
-            await offloadedTask.start();
+            taskQueue[0].start();
         });
     } else {
         res.statusCode = 200;
@@ -65,14 +65,10 @@ httpServer.once("listening", startOffloaderServices);
 async function onNewMonitorConnection(connection) {
     console.info(`A new monitor just connected on port ${WS_PORT}`);
     async function sendUpdatedMessage() {
-        const cpu =  await si.cpu();
-        const system = await si.system();
-        const gpu = (await si.graphics()).controllers.pop();
+        // const cpu =  await si.cpu();
+        // const system = await si.system();
+        // const gpu = (await si.graphics()).controllers.pop();
         const data = {
-            cpu: `${cpu.manufacturer} ${cpu.brand}`,
-            system_data: `${system.manufacturer} ${system.model}`,
-            load_data: await si.fullLoad(),
-            graphics_data : `${gpu.vendor} ${gpu.model}`,
             status: taskQueue.length > 0 ? taskQueue[0].getStatus() : "Inactive"
         };
         connection.send(JSON.stringify(data));
