@@ -26,6 +26,7 @@ ml_type = sys.argv[3]
 
 data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float")
 
+
 print(data)
 
 y = data[:,0]

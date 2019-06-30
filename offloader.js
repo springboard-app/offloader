@@ -38,6 +38,7 @@ db.collection("jobs").onSnapshot(async snapshot => {
                     return;
                 }
                 let path = `${projectId}.joblib`;
+                console.log(stdout)
                 await bucket.upload(path, {
                     destination: admin.storage().bucket().get(path),
                     resumable: false
