@@ -1,5 +1,3 @@
-node_modules
-service-account.json
-*.jpg
+*.json
 *.csv
-*.joblib
+node_modules

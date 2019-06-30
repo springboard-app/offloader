@@ -18,15 +18,39 @@ from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 
+from sklearn.model_selection import train_test_split
+
 id = sys.argv[1]
-print(id)
-exit()
+tt_percentage = sys.argv[2]
+ml_type = sys.argv[3]
 
-clf = load('model.joblib') 
+data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float")
 
-x_train = np.genfromtxt("x_train.csv")
-y_train = np.genfromtxt("y_train.csv")
+print(data)
 
-clf.fit(x_train,y_train)
+y = data[:,0]
+X = data[:,1:]
 
-dump(clf, str(id) + '.joblib') 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=float(tt_percentage), random_state=42)
+
+if ml_type == "Support Vector Machine":
+    ml_type = "SVC"
+elif ml_type == "Neural Network":
+    ml_type = "MLPClassifier"
+elif ml_type == "Naive Bayes":
+    ml_type = "GaussianNB"
+elif ml_type == "Support Vector Machine":
+    ml_type = "SVR"
+elif ml_type == "Neural Network":
+    ml_type = "MLPClassifier"
+else:
+    ml_type = ml_type.replace(" ","")
+
+ml_str = ml_type + "()"
+ml = eval(ml_str)
+ml.fit(X_train,y_train)
+
+if X_test is not None and y_test is not None:
+    print(ml.score(X_test,y_test))
+
+dump(ml, str(id) + '.joblib')
