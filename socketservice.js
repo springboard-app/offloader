@@ -5,6 +5,7 @@ const si = require('systeminformation');
 // promises style - new since version 3
 var cpu_data;
 var load_data;
+var system_data;
 var active = "Active";
 
 si.cpu()
@@ -12,7 +13,10 @@ si.cpu()
     .catch(error => console.error(error));
 
 si.fullLoad()
-    .then(data => load_data = HTMLTableDataCellElement)
+    .then(data => load_data = data)
+
+si.system()
+    .then(data => system_data = data.manufacturer + " " + data.model)
 
 module.exports.jobstarted = function (projectId){
     const wss = new WebSocket.Server({ port: 8080 });
@@ -25,9 +29,13 @@ module.exports.jobstarted = function (projectId){
             si.fullLoad()
                 .then(data => load_data = data)
             
+                si.system()
+    .then(data => system_data = data.manufacturer + " " + data.model)
+            
                 ws.send(JSON.stringify({
                     cpu_data,
                     load_data,
+                    system_data,
                     active
                 }));
             

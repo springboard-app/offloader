@@ -7,12 +7,13 @@
   <body>
       <h2>Springboard Offloader Dashboard</h2>
       <input id="search" type="text" placeholder="Search..">
-      <button onclick="search()">Search</button>
-      
+      <button onclick="search()">Connect</button>
+      <select id="offloaders"></select>
       <br>
       <br>
 
       <h3>Connected Machine Information</h3>
+      <h4 id="system_info"></h3>
       <table style="width:75%;">
         <tr>
                 <th>CPU</th>
@@ -33,6 +34,7 @@
         var cpu_info = document.getElementById("cpu_info");
         var active_info = document.getElementById("active_info");
         var load_info = document.getElementById("load_info");
+        var system_info = document.getElementById("system_info");
 
         const WebSocket = require('ws');
  
@@ -63,6 +65,7 @@
             data = JSON.parse(data)
 
             cpu_info.innerHTML = data['cpu_data'];
+            system_info.innerHTML = data['system_data']; 
             active_info.innerHTML = data['active'];
             if (data['active'] == "Active"){
                 active_info.style.color="green"
