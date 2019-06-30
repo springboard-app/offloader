@@ -38,8 +38,10 @@ function handleRequest(req, res) {
             });
             offloadedTask.on('done', function(e) {
                 taskQueue.splice(0, 1);
-                res.statusCode = 204;
                 res.end(e.accuracy)
+                res.statusCode = 204;
+                console.log(e.accuracy)
+
             });
             taskQueue.push(offloadedTask);
             await offloadedTask.start();
