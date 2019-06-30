@@ -21,7 +21,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import train_test_split
 
 id = sys.argv[1]
-tt_percentage = sys.argv[2]
+tt_percentage = float(sys.argv[2])
 ml_type = sys.argv[3]
 
 data = np.genfromtxt("data_matrix.csv",delimiter=',',dtype="float")
@@ -33,18 +33,17 @@ X = data[:,1:]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=float(tt_percentage), random_state=42)
 
-if ml_type == "Support Vector Machine":
+if ml_type == "Support Vector Classifier":
     ml_type = "SVC"
-elif ml_type == "Neural Network":
+elif ml_type == "Neural Network Classifier":
     ml_type = "MLPClassifier"
 elif ml_type == "Naive Bayes":
     ml_type = "GaussianNB"
-elif ml_type == "Support Vector Machine":
+elif ml_type == "Support Vector Regressor":
     ml_type = "SVR"
-elif ml_type == "Neural Network":
-    ml_type = "MLPClassifier"
 else:
     ml_type = ml_type.replace(" ","")
+print(ml_type)
 
 ml_str = ml_type + "()"
 ml = eval(ml_str)
