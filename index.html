@@ -8,11 +8,23 @@
       <h2>Springboard Offloader Dashboard</h2>
       <input id="search" type="text" placeholder="Search..">
       <button onclick="search()">Search</button>
+      
       <br>
       <br>
+
       <h3>Connected Machine Information</h3>
-      <h4 id="cpu_info"></h4>
-      <h3 id="active_info"></h3>
+      <table style="width:75%;">
+        <tr>
+                <th>CPU</th>
+                <th>Current Load</th>
+                <th>Job Status</th>
+        </tr>
+        <tr style="padding:10%;">
+      <th id="cpu_info"></th>
+      <th id="load_info"></th>
+      <th id="active_info"></th>
+    </tr>
+    </table>
 
       <script>
         var text = document.getElementById("search");
@@ -20,11 +32,21 @@
 
         var cpu_info = document.getElementById("cpu_info");
         var active_info = document.getElementById("active_info");
+        var load_info = document.getElementById("load_info");
 
         const WebSocket = require('ws');
  
         var ws;
+        var initialized = false;
         
+        setInterval(pollData,1000);
+
+        function pollData(){
+            if (initialized == true){
+                ws.send('information please');
+            }
+        }
+
         function search(){
             var val = text.value
             ws = new WebSocket(val);
@@ -32,6 +54,7 @@
             ws.on('open', function open() {
             
                 ws.send('information please');
+                initialized = true;
             });
             
             ws.on('message', function incoming(data) {
@@ -46,7 +69,7 @@
             }else{
                 active_info.style.color="red"
             }
-
+            load_info.innerHTML = Number.parseFloat(data['load_data']).toPrecision(4) + "%";
             });
             
         }

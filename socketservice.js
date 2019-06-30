@@ -11,15 +11,27 @@ si.cpu()
     .then(data => cpu_data = data.manufacturer + " " + data.brand)
     .catch(error => console.error(error));
 
-si.currentLoad()
-    .then(data => load_data = data.avgLoad)
+si.fullLoad()
+    .then(data => load_data = HTMLTableDataCellElement)
 
 module.exports.jobstarted = function (projectId){
     const wss = new WebSocket.Server({ port: 8080 });
     wss.on('connection', function connection(ws) {
         ws.on('message', function incoming(message) {
-          console.log('received: %s', message);
-        });
+            si.cpu()
+            .then(data => cpu_data = data.manufacturer + " " + data.brand)
+                .catch(error => console.error(error));
+            
+            si.fullLoad()
+                .then(data => load_data = data)
+            
+                ws.send(JSON.stringify({
+                    cpu_data,
+                    load_data,
+                    active
+                }));
+            
+            });
       
         ws.send(JSON.stringify({
             cpu_data,
