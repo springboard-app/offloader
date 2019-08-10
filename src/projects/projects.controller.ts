@@ -1,7 +1,7 @@
-import { Controller } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { Crud } from '@nestjsx/crud';
-import { Project } from './project.entity';
+import { Controller } from "@nestjs/common";
+import { ProjectsService } from "./projects.service";
+import { Crud } from "@nestjsx/crud";
+import { Project } from "./project.entity";
 
 @Crud({
   model: {
@@ -9,18 +9,16 @@ import { Project } from './project.entity';
   },
   params: {
     id: {
-      field: 'id',
+      field: "id",
       primary: true,
-      type: 'uuid'
+      type: "uuid"
     }
   },
   routes: {
-    exclude: ['createManyBase']
+    exclude: ["createManyBase"]
   }
 })
-@Controller('projects')
+@Controller("projects")
 export class ProjectsController {
-  constructor(
-    private readonly service: ProjectsService
-  ) {}
+  constructor(private readonly service: ProjectsService) {}
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import * as admin from 'firebase-admin';
+import { Injectable } from "@nestjs/common";
+import * as admin from "firebase-admin";
 // @ts-ignore
-import { version } from '../package.json';
+import { version } from "../package.json";
 
 @Injectable()
 export class AppService {
@@ -10,7 +10,6 @@ export class AppService {
     // See https://firebase.google.com/docs/admin/setup#initialize_without_parameters
     admin.initializeApp();
   }
-
   static getVersion(): string {
     return version;
   }
