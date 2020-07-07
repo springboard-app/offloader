@@ -9,7 +9,7 @@
     "@google-cloud/storage": "^2.5.0",
     "chart.js": "^2.8.0",
     "csv": "^5.1.1",
-    "electron": "^5.0.6",
+    "electron": "^7.2.4",
     "firebase": "^6.2.4",
     "firebase-admin": "^8.2.0",
     "ip": "^1.1.5",
